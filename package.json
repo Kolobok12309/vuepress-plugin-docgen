@@ -1,0 +1,54 @@
+{
+  "name": "vuepress-plugin-docgen",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Vuepress plugin for vue auto dec generation based on vue-docgen-api",
+  "main": "dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kolobok12309/vuepress-plugin-docgen.git"
+  },
+  "keywords": [
+    "vuepress-plugin",
+    "vue-docgen"
+  ],
+  "author": {
+    "name": "Dmitriy",
+    "email": "sova123409@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Kolobok12309/vuepress-plugin-docgen/issues"
+  },
+  "homepage": "https://github.com/Kolobok12309/vuepress-plugin-docgen#readme",
+  "devDependencies": {
+    "@vuepress/client": "^2.0.0-beta.60",
+    "chokidar": "^3.5.3",
+    "eslint": "^8.33.0",
+    "typescript": "^4.9.5",
+    "unbuild": "^1.1.1",
+    "vue": "^3.2.47",
+    "vuepress": "^2.0.0-beta.60"
+  },
+  "dependencies": {
+    "vue-docgen-api": "^4.56.4"
+  }
+}
