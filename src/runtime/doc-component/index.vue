@@ -1,6 +1,9 @@
 <template>
-  <div class="doc-component">
-    <template v-if="componentDoc.props.length">
+  <div
+    v-if="componentDoc"
+    class="doc-component"
+  >
+    <template v-if="componentDoc.props && componentDoc.props.length">
       <h2
         id="props"
         tabindex="-1"

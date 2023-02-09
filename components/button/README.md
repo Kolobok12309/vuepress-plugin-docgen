@@ -6,4 +6,4 @@ componentPath: ./index.vue
 
 ## H2 props
 
-<DocComponent />
+Some random text

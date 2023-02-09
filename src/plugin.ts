@@ -1,4 +1,4 @@
-import { resolve, dirname, join } from 'path';
+import { resolve, dirname, join, isAbsolute } from 'path';
 
 import type { Plugin, PageData } from 'vuepress';
 
@@ -45,11 +45,14 @@ export const VueDocgenPlugin = ({
           ...webpackConfig.toConfig().resolve as any,
         },
 
-        outDir: resolve(app.options.temp, './docgen'),
+        outDir: !docgenCliConfig.outDir || isAbsolute(docgenCliConfig.outDir)
+          ? docgenCliConfig.outDir
+          : join(app.options.source, docgenCliConfig.outDir),
       }
 
       console.log('Res config', docgenCliConfig);
 
+      console.log('Starting vue-docgen-cli');
       await docgen(docgenCliConfig);
     },
 
