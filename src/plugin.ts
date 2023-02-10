@@ -1,94 +1,146 @@
-import { resolve, dirname, join, isAbsolute } from 'path';
+import { resolve, join, basename } from 'path';
 
-import type { Plugin, PageData } from 'vuepress';
+import type { Plugin } from 'vuepress';
+import { createPage } from 'vuepress';
 
-import { parse, type ComponentDoc } from 'vue-docgen-api';
-import _docgen, { extractConfig, type DocgenCLIConfig } from 'vue-docgen-cli';
+import _docgen, { extractConfig } from 'vue-docgen-cli';
+// Is compatible with defineConfig
+import type { DocgenCLIConfig } from 'vue-docgen-cli/lib/config';
 import WebpackConfig from 'webpack-chain';
+import glob from 'globby';
 
 import chokidar from 'chokidar';
 
-import { isFileExists, webpackHandleResolve } from './utils';
+import { sleep, webpackHandleResolve } from './utils';
+import { tmpFolderName } from './config';
 
 
 const docgen = (_docgen as any).default as typeof import('vue-docgen-cli').default;
 
+
+export interface ComponentsInfo {
+  root?: string;
+  in: string | string[];
+  out?: string;
+}
 export interface VueDocgenPluginOptions {
-  docgenCliConfig?: DocgenCLIConfig;
+  docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir'>>;
   docgenCliConfigPath?: string;
+
+  docComponentsPath?: string;
+  components: string | string[] | ComponentsInfo[];
 }
 
 export const VueDocgenPlugin = ({
   docgenCliConfig,
   docgenCliConfigPath,
+
+  components = [],
 }: VueDocgenPluginOptions) => {
-  let componentPaths = [];
+  // Normalize components
+  if (!Array.isArray(components))
+    components = [components];
+
+  const normalizedComponentsInfo: ComponentsInfo[] = components.map((stringOrObject) => {
+    if (typeof stringOrObject === 'string') return {
+      in: stringOrObject,
+    };
+
+    return stringOrObject;
+  });
+
 
   return {
     name: 'vuepress-plugin-docgen',
 
     onInitialized: async (app) => {
-      console.log('app.options', app.options);
+      const tmpFolder = join(app.options.temp, tmpFolderName);
+
       if (!docgenCliConfig) {
-        docgenCliConfig = extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []);
+        docgenCliConfig = extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []) as any;
       }
 
       const webpackConfig = new WebpackConfig();
 
       await webpackHandleResolve({ app, config: webpackConfig, isServer: true });
 
-      docgenCliConfig = {
-        ...docgenCliConfig,
+      const baseDocgenCliConfig = {
+        ...docgenCliConfig as DocgenCLIConfig,
         apiOptions: {
           jsx: true,
           ...docgenCliConfig.apiOptions,
           ...webpackConfig.toConfig().resolve as any,
         },
+      };
 
-        outDir: !docgenCliConfig.outDir || isAbsolute(docgenCliConfig.outDir)
-          ? docgenCliConfig.outDir
-          : join(app.options.source, docgenCliConfig.outDir),
-      }
+      // Generate doc from components entries
+      await Promise.all(normalizedComponentsInfo.map(async ({
+        root: componentsRoot,
+        in: componentsInput,
+        out: componentsOutput = '',
+      }) => {
+        const outDir = resolve(tmpFolder, componentsOutput);
+        const config: DocgenCLIConfig = {
+          ...baseDocgenCliConfig,
+          ...(componentsRoot && { componentsRoot }),
+          components: componentsInput,
+          outDir,
+        };
 
-      console.log('Res config', docgenCliConfig);
+        await docgen(config);
+      }));
 
-      console.log('Starting vue-docgen-cli');
-      await docgen(docgenCliConfig);
+      // Without it, glob doesn't see generated files
+      await sleep(100);
+
+      // Read all generated doc files
+      const docFiles = await glob('**/*.md', {
+        cwd: tmpFolder,
+      });
+
+      // Add result files to vuepress router
+      await Promise.all(docFiles.map(async (relativeDocPath) => {
+        let normalizedRelativeDocPath = relativeDocPath;
+        const docBasename = basename(relativeDocPath);
+
+        // Normalize path
+        // Remove extension .md
+        normalizedRelativeDocPath = normalizedRelativeDocPath.slice(0, -3);
+        // Make README and index more friendly urls
+        if (docBasename.toLowerCase() === 'readme.md')
+          normalizedRelativeDocPath = normalizedRelativeDocPath.replace(/readme$/i, '');
+        if (docBasename.toLowerCase() === 'index.md')
+          normalizedRelativeDocPath = normalizedRelativeDocPath.replace(/index$/i, '');
+
+        // Remove last slash
+        if (normalizedRelativeDocPath.endsWith('/'))
+          normalizedRelativeDocPath = normalizedRelativeDocPath.slice(0, -1);
+
+        const page = await createPage(app, {
+          path: '/' + normalizedRelativeDocPath,
+          filePath: join(tmpFolder, relativeDocPath),
+        });
+
+        app.pages.push(page);
+      }));
+
+      console.log('pages', app.pages.map(({ path }) => path));
     },
 
-    /*extendsPage: async (page, app) => {
-      if (page.filePath) {
-        const fileDir = dirname(page.filePath);
-        const componentPath = page?.frontmatter?.componentPath as string || 'index.vue';
-        const fullComponentPath = resolve(fileDir, componentPath);
-        const isComponentExists = await isFileExists(fullComponentPath);
-
-        if (isComponentExists) {
-          componentPaths.push(fullComponentPath);
-
-          page.frontmatter = page.frontmatter ?? {};
-          page.frontmatter.componentPath = componentPath;
-          page.frontmatter.fullComponentPath = fullComponentPath;
-
-          const parsedComponent = await parse(fullComponentPath);
-
-          page.data.componentDoc = parsedComponent;
-          console.log(page.filePath, parsedComponent);
-        }
-      }
-    },
 
     onWatched(app, watchers, restart) {
-      const watcher = chokidar.watch(componentPaths, {
-        cwd: process.cwd(),
+      const tmpFolder = join(app.options.temp, tmpFolderName);
+
+      const watcher = chokidar.watch('**/*.md', {
+        cwd: tmpFolder,
         ignoreInitial: true,
       });
 
       watcher.on('change', () => restart());
 
       watchers.push(watcher);
-    },*/
+    },
 
-    clientConfigFile: resolve(__dirname, './runtime/client.ts')
+    // clientConfigFile: resolve(__dirname, './runtime/client.ts')
   } as Plugin;
 }
