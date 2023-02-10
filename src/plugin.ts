@@ -24,6 +24,7 @@ export interface ComponentsInfo {
   root?: string;
   // Glob string for find components
   in: string | string[];
+  // Out path of docs in vuepress app
   out?: string;
 }
 export interface VueDocgenPluginOptions {
