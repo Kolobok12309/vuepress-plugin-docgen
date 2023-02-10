@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@vuepress/bundler-webpack": "^2.0.0-beta.60",
+    "defu": "^6.1.2",
     "globby": "^10.0.2",
     "vue-docgen-api": "^4.56.4",
     "vue-docgen-cli": "^4.57.1",

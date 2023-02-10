@@ -4,6 +4,7 @@ specifiers:
   '@vuepress/bundler-webpack': ^2.0.0-beta.60
   '@vuepress/client': ^2.0.0-beta.60
   chokidar: ^3.5.3
+  defu: ^6.1.2
   eslint: ^8.33.0
   globby: ^10.0.2
   typescript: ^4.9.5
@@ -16,6 +17,7 @@ specifiers:
 
 dependencies:
   '@vuepress/bundler-webpack': 2.0.0-beta.60
+  defu: 6.1.2
   globby: 10.0.2
   vue-docgen-api: 4.56.4_vue@3.2.47
   vue-docgen-cli: 4.57.1_vue@3.2.47
@@ -2196,7 +2198,6 @@ packages:
 
   /defu/6.1.2:
     resolution: {integrity: sha512-+uO4+qr7msjNNWKYPHqN/3+Dx3NFkmIzayk2L1MyZQlvgZb/J1A0fo410dpKrN2SnqFjt8n4JL8fDJE0wIgjFQ==}
-    dev: true
 
   /depd/1.1.2:
     resolution: {integrity: sha512-7emPTl6Dpo6JRXOXjLRxck+FlLRX5847cLKEn00PLAgc3g2hTZZgr+e4c2v6QpSmLeFP3n5yUo7ft6avBK/5jQ==}

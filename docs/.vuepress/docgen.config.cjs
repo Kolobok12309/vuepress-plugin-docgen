@@ -1,5 +1,3 @@
-const { resolve } = require('path');
-
 const { defineConfig } = require('vue-docgen-cli');
 
 

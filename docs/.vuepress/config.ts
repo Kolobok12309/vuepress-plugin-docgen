@@ -12,13 +12,14 @@ export default defineUserConfig({
   },
   plugins: [
     VueDocgenPlugin({
-      docgenCliConfigPath: resolve(__dirname, './docgen.config.cjs'),
-      // docgenCliConfig: defineConfig({
-      //   docsRepo: 'kolobok12309/vuepress-plugin-docgen',
-      //   docsBranch: 'master',
-      //   editLinkLabel: 'Edit on github',
-      // }),
+      // docgenCliConfigPath: resolve(__dirname, './docgen.config.cjs'),
+      docgenCliConfig: defineConfig({
+        docsRepo: 'kolobok12309/vuepress-plugin-docgen',
+        docsBranch: 'master',
+        editLinkLabel: 'Edit on github',
+      }),
 
+      // components: 'components/**/*.vue',
       components: [
         {
           root: resolve(__dirname, '../../components'),

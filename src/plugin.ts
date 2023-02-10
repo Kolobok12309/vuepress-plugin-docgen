@@ -9,6 +9,7 @@ import type { DocgenCLIConfig } from 'vue-docgen-cli/lib/config';
 import WebpackConfig from 'webpack-chain';
 import glob from 'globby';
 
+import defu from 'defu';
 import chokidar from 'chokidar';
 
 import { sleep, webpackHandleResolve } from './utils';
@@ -24,15 +25,14 @@ export interface ComponentsInfo {
   out?: string;
 }
 export interface VueDocgenPluginOptions {
-  docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir'>>;
+  docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir' | 'components'>>;
   docgenCliConfigPath?: string;
 
-  docComponentsPath?: string;
   components: string | string[] | ComponentsInfo[];
 }
 
 export const VueDocgenPlugin = ({
-  docgenCliConfig,
+  docgenCliConfig = {},
   docgenCliConfigPath,
 
   components = [],
@@ -56,19 +56,18 @@ export const VueDocgenPlugin = ({
     onInitialized: async (app) => {
       const tmpFolder = join(app.options.temp, tmpFolderName);
 
-      if (!docgenCliConfig) {
-        docgenCliConfig = extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []) as any;
-      }
+      const safeDocgenCliConfig = defu(docgenCliConfig, extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
 
+      // Create WebpackConfig for getting aliases and other config.resolve
       const webpackConfig = new WebpackConfig();
 
       await webpackHandleResolve({ app, config: webpackConfig, isServer: true });
 
       const baseDocgenCliConfig = {
-        ...docgenCliConfig as DocgenCLIConfig,
+        ...safeDocgenCliConfig,
         apiOptions: {
           jsx: true,
-          ...docgenCliConfig.apiOptions,
+          ...safeDocgenCliConfig.apiOptions,
           ...webpackConfig.toConfig().resolve as any,
         },
       };
@@ -80,7 +79,7 @@ export const VueDocgenPlugin = ({
         out: componentsOutput = '',
       }) => {
         const outDir = resolve(tmpFolder, componentsOutput);
-        const config: DocgenCLIConfig = {
+        const config = {
           ...baseDocgenCliConfig,
           ...(componentsRoot && { componentsRoot }),
           components: componentsInput,
@@ -123,8 +122,6 @@ export const VueDocgenPlugin = ({
 
         app.pages.push(page);
       }));
-
-      console.log('pages', app.pages.map(({ path }) => path));
     },
 
 
