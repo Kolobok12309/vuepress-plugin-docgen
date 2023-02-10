@@ -20,22 +20,26 @@ const docgen = (_docgen as any).default as typeof import('vue-docgen-cli').defau
 
 
 export interface ComponentsInfo {
+  // Root of component (this part of file path would cutted)
   root?: string;
+  // Glob string for find components
   in: string | string[];
   out?: string;
 }
 export interface VueDocgenPluginOptions {
   docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir' | 'components'>>;
+  // Path to vue-docgen-cli config
   docgenCliConfigPath?: string;
 
-  components: string | string[] | ComponentsInfo[];
+  // List of component entries with custom outputs
+  components?: string | string[] | ComponentsInfo[];
 }
 
 export const VueDocgenPlugin = ({
   docgenCliConfig = {},
   docgenCliConfigPath,
 
-  components = [],
+  components = [{ in: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }],
 }: VueDocgenPluginOptions) => {
   // Normalize components
   if (!Array.isArray(components))

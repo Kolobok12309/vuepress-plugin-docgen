@@ -20,18 +20,18 @@ export default defineUserConfig({
       }),
 
       // components: 'components/**/*.vue',
-      components: [
-        {
-          root: resolve(__dirname, '../../components'),
-          in: '**/*.vue',
-          out: 'components',
-        },
-        {
-          root: resolve(__dirname, '../../components'),
-          in: '**/*.vue',
-          out: 'foo/bar',
-        }
-      ],
+      // components: [
+      //   {
+      //     root: resolve(__dirname, '../../components'),
+      //     in: '**/*.vue',
+      //     out: 'components',
+      //   },
+      //   {
+      //     root: resolve(__dirname, '../../components'),
+      //     in: '**/*.vue',
+      //     out: 'foo/bar',
+      //   }
+      // ],
     }),
   ],
 });
