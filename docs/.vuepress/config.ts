@@ -7,6 +7,8 @@ import { VueDocgenPlugin } from '../../src/index';
 
 
 export default defineUserConfig({
+  base: process.env.BASE_URL as any || '/',
+
   alias: {
     '@runtime': resolve(__dirname, '../../src/runtime'),
   },
