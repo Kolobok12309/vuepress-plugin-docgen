@@ -42,11 +42,72 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     name: Process version
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
     steps:
       - uses: actions/checkout@v3
 
       - name: Process version
         uses: google-github-actions/release-please-action@v3
+        id: release
         with:
           release-type: node
           package-name: vuepress-plugin-docgen
+
+  doc:
+    runs-on: ubuntu-latest
+    needs: release-please
+    name: Build and deploy doc
+    if: needs.release-please.outputs.releases_created == 'true'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'pnpm'
+
+      - name: Build example site
+        run: pnpm docs:build
+        env:
+          BASE_URL: /vuepress-plugin-docgen/
+
+      - name: Deploy to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/.vuepress/dist
+
+  npm:
+    runs-on: ubuntu-latest
+    needs: release-please
+    name: Publish to npm
+    if: needs.release-please.outputs.releases_created == 'true'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+
+      - name: Restore build cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            dist
+          key: ${{ runner.os }}-build-${{ github.sha }}
+
+      - name: Publish npm package
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
