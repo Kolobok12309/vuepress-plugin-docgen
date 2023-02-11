@@ -36,13 +36,16 @@ export default (grayMatterOptions: GrayMatterOption<any, any>, originalComponent
     subTemplateOptions,
   );
 
-  const {
+  let {
     content,
   } = extractAndCutFrontmatter(
     doc,
     grayMatterOptions,
     originalResultWithoutDocsBlocks,
   );
+
+  if (doc.docsBlocks)
+    content += '---\n' + doc.docsBlocks.join('\n---\n')
 
   return content;
 };
