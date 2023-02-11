@@ -1,7 +1,7 @@
 import { resolve, join, basename } from 'path';
 
-import type { Plugin } from 'vuepress';
-import { createPage } from 'vuepress';
+import type { Plugin } from '@vuepress/core';
+import { createPage } from '@vuepress/core';
 
 import _docgen, { extractConfig } from 'vue-docgen-cli';
 import WebpackConfig from 'webpack-chain';

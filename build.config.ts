@@ -4,18 +4,20 @@ import { defineBuildConfig } from 'unbuild'
 export default defineBuildConfig({
   entries: [
     './src/index',
-    {
-      builder: 'mkdist',
-      input: './src/runtime',
-      outDir: './dist/runtime',
-    },
   ],
   rollup: {
     emitCJS: true,
   },
   externals: [
+    '@vuepress/bundler-webpack',
+    '@vuepress/core',
+    'chokidar',
+    'defu',
+    'globby',
+    'gray-matter',
+    'vue-docgen-cli',
     'vue-docgen-api',
-    'vuepress',
+    'webpack-chain',
   ],
 
   outDir: 'dist',

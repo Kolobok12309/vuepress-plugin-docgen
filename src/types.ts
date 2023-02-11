@@ -1,7 +1,7 @@
 import { DocgenCLIConfig } from 'vue-docgen-cli/lib/config';
 
 
-declare module 'vuepress' {
+declare module '@vuepress/core' {
   interface PageOptions {
     isDocgenPage?: boolean;
   }

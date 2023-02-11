@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }

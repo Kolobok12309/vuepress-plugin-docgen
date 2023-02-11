@@ -1,5 +1,5 @@
 // Full copy of https://github.com/vuepress/vuepress-next/blob/fd2e241235fc87c66ce59ba22c8e27521c594fbd/packages/bundler-webpack/src/config/handleResolve.ts
-import type { App } from 'vuepress'
+import type { App } from '@vuepress/core'
 import type Config from 'webpack-chain'
 
 /**

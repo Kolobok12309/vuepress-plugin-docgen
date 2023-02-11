@@ -1,7 +1,5 @@
 ---
-title: FooBars1
-permal1ink: /foo/button
-permal1inkPattern: :year/:month/:day/:slug.html
+title: Very good button
 ---
 
 Basic button:
