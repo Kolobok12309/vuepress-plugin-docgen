@@ -21,17 +21,17 @@ export default defineUserConfig({
         editLinkLabel: 'Edit on github',
       }),
 
-      // components: 'components/**/*.vue',
-      // components: [
+      pages: 'components/**/*.vue',
+      // pages: [
       //   {
       //     root: resolve(__dirname, '../../components'),
-      //     in: '**/*.vue',
-      //     out: 'components',
+      //     components: '**/*.vue',
+      //     outDir: 'components',
       //   },
       //   {
       //     root: resolve(__dirname, '../../components'),
-      //     in: '**/*.vue',
-      //     out: 'foo/bar',
+      //     components: '**/*.vue',
+      //     outDir: 'foo/bar',
       //   }
       // ],
     }),

@@ -4,13 +4,13 @@ import type { Plugin } from 'vuepress';
 import { createPage } from 'vuepress';
 
 import _docgen, { extractConfig } from 'vue-docgen-cli';
-// Is compatible with defineConfig
-import type { DocgenCLIConfig } from 'vue-docgen-cli/lib/config';
 import WebpackConfig from 'webpack-chain';
 import glob from 'globby';
 
 import defu from 'defu';
 import chokidar from 'chokidar';
+
+import templateComponent from './templates/component';
 
 import type { VueDocgenPluginPages, VueDocgenPluginOptions } from './types';
 import { sleep, webpackHandleResolve } from './utils';
@@ -43,6 +43,7 @@ export const VueDocgenPlugin = ({
     name: 'vuepress-plugin-docgen',
 
     onInitialized: async (app) => {
+      const { grayMatterOptions } = app.options.markdown.frontmatter || {};
       const tmpFolder = join(app.options.temp, tmpFolderName);
 
       const safeDocgenCliConfig = defu(docgenCliConfig, extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
@@ -58,6 +59,11 @@ export const VueDocgenPlugin = ({
           jsx: true,
           ...safeDocgenCliConfig.apiOptions,
           ...webpackConfig.toConfig().resolve as any,
+        },
+        templates: {
+          ...safeDocgenCliConfig.templates,
+          component: templateComponent(grayMatterOptions, safeDocgenCliConfig.templates.component),
+          ...docgenCliConfig?.templates,
         },
       };
 
@@ -107,7 +113,12 @@ export const VueDocgenPlugin = ({
         const page = await createPage(app, {
           path: '/' + normalizedRelativeDocPath,
           filePath: join(tmpFolder, relativeDocPath),
+          isDocgenPage: true,
         });
+
+        // Use original permalink if exists
+        if (page.permalink)
+          page.path = page.permalink;
 
         app.pages.push(page);
       }));
@@ -126,7 +137,5 @@ export const VueDocgenPlugin = ({
 
       watchers.push(watcher);
     },
-
-    // clientConfigFile: resolve(__dirname, './runtime/client.ts')
   } as Plugin;
 }
