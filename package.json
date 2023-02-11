@@ -2,7 +2,7 @@
   "name": "vuepress-plugin-vue-docgen",
   "version": "0.1.0",
   "type": "module",
-  "description": "Vuepress plugin for vue auto dec generation based on vue-docgen-api",
+  "description": "Vuepress plugin for vue auto doc generation based on vue-docgen-cli",
   "main": "dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -30,7 +30,8 @@
   "keywords": [
     "vuepress",
     "vuepress-plugin",
-    "vue-docgen"
+    "vue-docgen",
+    "vue-docgen-cli"
   ],
   "author": {
     "name": "Dmitriy",
