@@ -17,6 +17,7 @@ import { sleep, webpackHandleResolve } from './utils';
 import { tmpFolderName } from './config';
 
 
+// TODO Fix this imports
 const docgen = (_docgen as any).default as typeof import('vue-docgen-cli').default;
 
 
@@ -62,7 +63,7 @@ export const VueDocgenPlugin = ({
         },
         templates: {
           ...safeDocgenCliConfig.templates,
-          component: templateComponent(grayMatterOptions, safeDocgenCliConfig.templates.component),
+          component: templateComponent(grayMatterOptions),
           ...docgenCliConfig?.templates,
         },
       };

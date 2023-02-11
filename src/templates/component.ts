@@ -1,11 +1,14 @@
 import type { GrayMatterOption } from 'gray-matter';
 import { Templates } from 'vue-docgen-cli';
-// import originalComponentTemplate from 'vue-docgen-cli/lib/templates/component.js';
+import _originalComponentTemplate from 'vue-docgen-cli/lib/templates/component.js';
 
 import { extractAndCutFrontmatter } from '../utils';
 
 
-export default (grayMatterOptions: GrayMatterOption<any, any>, originalComponentTemplate): Templates['component'] => (
+// TODO Fix this imports
+const originalComponentTemplate = (_originalComponentTemplate as any).default as typeof import('vue-docgen-cli/lib/templates/component').default;
+
+export default (grayMatterOptions: GrayMatterOption<any, any>): Templates['component'] => (
   renderedUsage,
   doc,
   config,
