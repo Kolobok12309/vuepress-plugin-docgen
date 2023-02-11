@@ -1,5 +1,5 @@
 {
-  "name": "vuepress-plugin-docgen",
+  "name": "vuepress-plugin-vue-docgen",
   "version": "0.1.0",
   "type": "module",
   "description": "Vuepress plugin for vue auto dec generation based on vue-docgen-api",
@@ -28,6 +28,7 @@
     "url": "git+https://github.com/Kolobok12309/vuepress-plugin-docgen.git"
   },
   "keywords": [
+    "vuepress",
     "vuepress-plugin",
     "vue-docgen"
   ],
