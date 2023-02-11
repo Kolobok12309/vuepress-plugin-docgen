@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build plugin
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -23,7 +23,7 @@ jobs:
           run_install: true
 
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'pnpm'
@@ -43,7 +43,7 @@ jobs:
     needs: build
     name: Process version
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Process version
         uses: google-github-actions/release-please-action@v3
