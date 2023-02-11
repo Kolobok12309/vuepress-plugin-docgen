@@ -58,7 +58,16 @@ File path to `docgenCliConfig`. Worked only `commonjs` syntax.
 
 ### pages
 
-https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/82d9994164057bbf88f5ab6da442c03c6e37326e/src/types.ts#L10-L17
+```ts
+interface VueDocgenPluginPages {
+  // Root of component (this part of file path would cutted)
+  root?: string;
+  // Glob string for find components
+  components: string | string[];
+  // Out path of docs in vuepress app
+  outDir?: string;
+}
+```
 
 - type: `string | string[] | VueDocgenPluginPages[]`
 - required: `false`
@@ -70,4 +79,17 @@ List of component entries with custom `root` and `outDir`. `string` types conver
 
 For right integration with `frontmatter`, `docgenCliConfig.templates.component` modified by this plugin to use and merge `frontmatter` from `ComponentDoc.docsBlocks`. Full usage code in [`/src/templates/component.ts`](https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/master/src/templates/component.ts)
 
-https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/82d9994164057bbf88f5ab6da442c03c6e37326e/src/utils/extractAndCutFrontmatter.ts#L10-L21
+```ts
+export const extractAndCutFrontmatter = (
+  // doc.docsBlocks will modified by this function
+  doc: Partial<Pick<ComponentDoc, 'docsBlocks'>>,
+  grayMatterOptions: GrayMatterOption<any, any>,
+  // Base markdown content (for example result of original templates.component)
+  content = '',
+): {
+  // Content with injected all frontmatter
+  content: string;
+  // Separated frontmatter
+  frontmatter: Record<any, any>;
+} => {}
+```
