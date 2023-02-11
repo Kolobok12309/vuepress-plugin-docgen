@@ -58,7 +58,7 @@ File path to `docgenCliConfig`. Worked only `commonjs` syntax.
 
 ### pages
 
-https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/732126ad5ab957d66dc81f9b93607e50a57e167e/src/types.ts#L10-L17
+https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/82d9994164057bbf88f5ab6da442c03c6e37326e/src/types.ts#L10-L17
 
 - type: `string | string[] | VueDocgenPluginPages[]`
 - required: `false`
@@ -70,4 +70,4 @@ List of component entries with custom `root` and `outDir`. `string` types conver
 
 For right integration with `frontmatter`, `docgenCliConfig.templates.component` modified by this plugin to use and merge `frontmatter` from `ComponentDoc.docsBlocks`. Full usage code in [`/src/templates/component.ts`](https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/master/src/templates/component.ts)
 
-https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/01b4319b5ef24dc37f9aa28195c3c3e4255b40af/src/utils/extractAndCutFrontmatter.ts#L10-L18
+https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/82d9994164057bbf88f5ab6da442c03c6e37326e/src/utils/extractAndCutFrontmatter.ts#L10-L21
