@@ -12,6 +12,7 @@ import glob from 'globby';
 import defu from 'defu';
 import chokidar from 'chokidar';
 
+import type { VueDocgenPluginPages, VueDocgenPluginOptions } from './types';
 import { sleep, webpackHandleResolve } from './utils';
 import { tmpFolderName } from './config';
 
@@ -19,36 +20,19 @@ import { tmpFolderName } from './config';
 const docgen = (_docgen as any).default as typeof import('vue-docgen-cli').default;
 
 
-export interface ComponentsInfo {
-  // Root of component (this part of file path would cutted)
-  root?: string;
-  // Glob string for find components
-  in: string | string[];
-  // Out path of docs in vuepress app
-  out?: string;
-}
-export interface VueDocgenPluginOptions {
-  docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir' | 'components'>>;
-  // Path to vue-docgen-cli config
-  docgenCliConfigPath?: string;
-
-  // List of component entries with custom outputs
-  components?: string | string[] | ComponentsInfo[];
-}
-
 export const VueDocgenPlugin = ({
   docgenCliConfig = {},
   docgenCliConfigPath,
 
-  components = [{ in: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }],
+  pages = [{ components: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }],
 }: VueDocgenPluginOptions) => {
-  // Normalize components
-  if (!Array.isArray(components))
-    components = [components];
+  // Normalize pages
+  if (!Array.isArray(pages))
+    pages = [pages];
 
-  const normalizedComponentsInfo: ComponentsInfo[] = components.map((stringOrObject) => {
+  const normalizedPages: VueDocgenPluginPages[] = pages.map((stringOrObject) => {
     if (typeof stringOrObject === 'string') return {
-      in: stringOrObject,
+      components: stringOrObject,
     };
 
     return stringOrObject;
@@ -78,16 +62,16 @@ export const VueDocgenPlugin = ({
       };
 
       // Generate doc from components entries
-      await Promise.all(normalizedComponentsInfo.map(async ({
+      await Promise.all(normalizedPages.map(async ({
         root: componentsRoot,
-        in: componentsInput,
-        out: componentsOutput = '',
+        components,
+        outDir: rawOutDir = '',
       }) => {
-        const outDir = resolve(tmpFolder, componentsOutput);
+        const outDir = resolve(tmpFolder, rawOutDir);
         const config = {
           ...baseDocgenCliConfig,
           ...(componentsRoot && { componentsRoot }),
-          components: componentsInput,
+          components,
           outDir,
         };
 
