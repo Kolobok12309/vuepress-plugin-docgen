@@ -42,11 +42,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     name: Process version
-      steps:
-        - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-        - name: Process version
-          uses: google-github-actions/release-please-action@v3
-          with:
-            release-type: node
-            package-name: vuepress-plugin-docgen
+      - name: Process version
+        uses: google-github-actions/release-please-action@v3
+        with:
+          release-type: node
+          package-name: vuepress-plugin-docgen
