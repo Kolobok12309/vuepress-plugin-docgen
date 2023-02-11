@@ -11,10 +11,13 @@ export const extractAndCutFrontmatter = (
   // doc.docsBlocks will modified by this function
   doc: Partial<Pick<ComponentDoc, 'docsBlocks'>>,
   grayMatterOptions: GrayMatterOption<any, any>,
+  // Base markdown content (for example result of original templates.component)
   content = '',
 ): {
+  // Content with injected all frontmatter
   content: string;
-  frontMatter: Record<any, any>;
+  // Separated frontmatter
+  frontmatter: Record<any, any>;
 } => {
   const {
     data: topContentFrontmatter = {},
@@ -22,7 +25,7 @@ export const extractAndCutFrontmatter = (
     // Without .trim() matter ignore some files
   } = matter(content.trim(), grayMatterOptions);
 
-  let frontMatter = topContentFrontmatter;
+  let frontmatter = topContentFrontmatter;
 
   doc.docsBlocks?.forEach((blockContent, index) => {
     const {
@@ -30,13 +33,13 @@ export const extractAndCutFrontmatter = (
       content: cuttedBlockContent
     } = matter(blockContent.trim(), grayMatterOptions);
 
-    frontMatter = defu(data, frontMatter);
+    frontmatter = defu(data, frontmatter);
     doc.docsBlocks[index] = cuttedBlockContent;
   });
 
 
   return {
-    content: matter.stringify(cuttedTopContent, frontMatter, grayMatterOptions),
-    frontMatter,
+    content: matter.stringify(cuttedTopContent, frontmatter, grayMatterOptions),
+    frontmatter,
   };
 };

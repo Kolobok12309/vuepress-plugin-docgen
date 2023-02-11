@@ -70,17 +70,4 @@ List of component entries with custom `root` and `outDir`. `string` types conver
 
 For right integration with `frontmatter`, `docgenCliConfig.templates.component` modified by this plugin to use and merge `frontmatter` from `ComponentDoc.docsBlocks`. Full usage code in [`/src/templates/component.ts`](https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/master/src/templates/component.ts)
 
-```ts
-declare const extractAndCutFrontmatter: (
-  // doc.docsBlocks will modified by this function
-  doc: Partial<Pick<ComponentDoc, 'docsBlocks'>>, 
-  grayMatterOptions: GrayMatterOption<any, any>,
-  // Base markdown content (for example result of original templates.component)
-  content?: string,
-) => {
-    // Content with injected all frontmatter
-    content: string;
-    // Separated frontmatter
-    frontMatter: Record<any, any>;
-};
-```
+https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/01b4319b5ef24dc37f9aa28195c3c3e4255b40af/src/utils/extractAndCutFrontmatter.ts#L10-L18
