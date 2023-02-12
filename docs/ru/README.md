@@ -50,24 +50,26 @@ export default defineUserConfig({
 
 Путь к `docgenCliConfig`. Работает лишь в `commonjs` синтаксисе модуля.
 
-### pages
+### groups
 
 ```ts
-interface VueDocgenPluginPages {
+interface VueDocgenPluginGroup {
   // Корень набора компонентов (эта часть пути будет вырезана из итогового url)
   root?: string;
   // Glob строка для поиска компонентов
   components: string | string[];
-  // Итоговая папка документации конкретной Page в vuepress
+  // Итоговая папка документации конкретной группы в vuepress
   outDir?: string;
+  // docgenCliConfig для конкретной группы компонентов
+  docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir' | UsedInVueDocgenConfigProcessingProperties>>;
 }
 ```
 
-- type: `string | string[] | VueDocgenPluginPages[]`
+- type: `string | string[] | VueDocgenPluginGroup[]`
 - required: `false`
 - default: `[{ components: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }]`
 
-Список наборов компонентов с возможностью кастомизации `root` и `outDir`. `string` типы конвертируются в объект вида `pages: '*.vue'` -> `pages: [{ components: '*.vue' }]`.
+Список наборов компонентов с возможностью кастомизации `root` и `outDir`. `string` типы конвертируются в объект вида `groups: '*.vue'` -> `groups: [{ components: '*.vue' }]`.
 
 ### stateless
 

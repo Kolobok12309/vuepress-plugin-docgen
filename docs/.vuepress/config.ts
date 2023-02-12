@@ -23,7 +23,7 @@ export default defineUserConfig({
       },
 
       stateless: true,
-      pages: 'components/**/*.vue',
+      groups: 'components/**/*.vue',
       // pages: [
       //   {
       //     root: resolve(__dirname, '../../components'),

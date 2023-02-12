@@ -12,7 +12,7 @@ import chokidar from 'chokidar';
 
 import { templateComponent } from './templates';
 
-import type { VueDocgenPluginPages, VueDocgenPluginOptions } from './types';
+import type { VueDocgenPluginGroup, VueDocgenPluginOptions } from './types';
 import { sleep, webpackHandleResolve, defaultGetDestFile, reResolveAppPages } from './utils';
 import { tmpFolderName } from './config';
 
@@ -25,17 +25,17 @@ export const VueDocgenPlugin = ({
   docgenCliConfig = {},
   docgenCliConfigPath,
 
-  pages = [{ components: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }],
+  groups = [{ components: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }],
   stateless = true,
 }: VueDocgenPluginOptions) => {
-  // Normalize pages
-  if (!Array.isArray(pages))
-    pages = [pages];
+  // Normalize groups
+  if (!Array.isArray(groups))
+    groups = [groups];
 
-  const normalizedPages: VueDocgenPluginPages[] = pages.map((stringOrObject) => {
+  const normalizedGroups = groups.map<VueDocgenPluginGroup>((stringOrObject) => {
     if (typeof stringOrObject === 'string') return {
       components: stringOrObject,
-    };
+    } as VueDocgenPluginGroup;
 
     return stringOrObject;
   });
@@ -64,20 +64,20 @@ export const VueDocgenPlugin = ({
       }, extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
 
       // Generate doc from components entries
-      await Promise.all(normalizedPages.map(async ({
+      await Promise.all(normalizedGroups.map(async ({
         root: componentsRoot,
         components,
         outDir: rawOutDir = '',
+        docgenCliConfig: groupDocgenCliConfig = {},
       }) => {
         const outDir = stateless
           ? resolve(tmpFolder, rawOutDir)
           : resolve(rootFolder, rawOutDir);
-        const config = {
-          ...baseDocgenCliConfig,
-          ...(componentsRoot && { componentsRoot }),
+        const config = defu({
+          componentsRoot,
           components,
           outDir,
-        };
+        }, baseDocgenCliConfig, groupDocgenCliConfig);
 
         await docgen(config);
       }));

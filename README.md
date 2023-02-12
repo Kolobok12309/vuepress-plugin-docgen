@@ -37,7 +37,7 @@ export default defineUserConfig({
       docgenCliConfigPath: null,
       docgenCliConfig: null,
       
-      pages: 'components/**/*.vue',
+      groups: 'components/**/*.vue',
     }),
   ],
 });
@@ -61,24 +61,26 @@ Config for `vue-docgen-cli`.
 
 File path to `docgenCliConfig`. Worked only `commonjs` syntax.
 
-### pages
+### groups
 
 ```ts
-interface VueDocgenPluginPages {
+interface VueDocgenPluginGroup {
   // Root of component (this part of file path would cutted)
   root?: string;
   // Glob string for find components
   components: string | string[];
-  // Out path of docs in vuepress app
+  // Out path of docs in vuepress app for this group
   outDir?: string;
+  // Custom docgenCliConfig for current group
+  docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir' | UsedInVueDocgenConfigProcessingProperties>>;
 }
 ```
 
-- type: `string | string[] | VueDocgenPluginPages[]`
+- type: `string | string[] | VueDocgenPluginGroup[]`
 - required: `false`
 - default: `[{ components: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }]`
 
-List of component entries with custom `root` and `outDir`. `string` types converted like this `pages: '*.vue'` -> `pages: [{ components: '*.vue' }]`.
+List of component entries with custom `root` and `outDir`. `string` types converted like this `groups: '*.vue'` -> `groups: [{ components: '*.vue' }]`.
 
 ### stateless
 
