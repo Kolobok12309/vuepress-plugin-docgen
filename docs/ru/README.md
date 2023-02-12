@@ -133,3 +133,13 @@ const componentTemplate: Templates['component'] = (
   );
 };
 ```
+
+## Известные ошибки
+
+### Vuepress editLink
+
+"Edit this page" в `stateless: true` моде не будет работать корректно и будет вести на несуществующий файл.
+
+Возможные решение:
+- `stateless: false` и хранить все сгенерированные файлы в репозитории.
+- Использовать [`docgenCliConfig.getRepoEditUrl`](https://github.com/vue-styleguidist/vue-styleguidist/tree/dev/packages/vue-docgen-cli#getrepoediturl) и его под-свойства типа `docsRepo`, `docsBranch`.

@@ -80,6 +80,13 @@ interface VueDocgenPluginPages {
 
 List of component entries with custom `root` and `outDir`. `string` types converted like this `pages: '*.vue'` -> `pages: [{ components: '*.vue' }]`.
 
+### stateless
+
+- type: `boolean`
+- default: `true`
+
+Mode for generation files in tmp folder.
+
 ## extractAndCutFrontmatter
 
 For right integration with `frontmatter`, `docgenCliConfig.templates.component` modified by this plugin to use and merge `frontmatter` from `ComponentDoc.docsBlocks`. Full usage code in [`/src/templates/component.ts`](https://github.com/Kolobok12309/vuepress-plugin-docgen/blob/master/src/templates/component.ts)
@@ -98,3 +105,13 @@ export const extractAndCutFrontmatter = (
   frontmatter: Record<any, any>;
 } => {}
 ```
+
+## Known issues
+
+### Vuepress editLink
+
+"Edit this page" in `stateless: true` mode will not work correctly and lead to a non-existent file.
+
+Solutions:
+- `stateless: false` and save all generated files in repo
+- Use [`docgenCliConfig.getRepoEditUrl`](https://github.com/vue-styleguidist/vue-styleguidist/tree/dev/packages/vue-docgen-cli#getrepoediturl) and their sub-properties like `docsRepo`, `docsBranch`.
