@@ -13,7 +13,7 @@ import chokidar from 'chokidar';
 import { templateComponent } from './templates';
 
 import type { VueDocgenPluginPages, VueDocgenPluginOptions } from './types';
-import { sleep, webpackHandleResolve, defaultGetDestFile } from './utils';
+import { sleep, webpackHandleResolve, defaultGetDestFile, reResolveAppPages } from './utils';
 import { tmpFolderName } from './config';
 
 
@@ -26,6 +26,7 @@ export const VueDocgenPlugin = ({
   docgenCliConfigPath,
 
   pages = [{ components: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }],
+  stateless = true,
 }: VueDocgenPluginOptions) => {
   // Normalize pages
   if (!Array.isArray(pages))
@@ -46,10 +47,10 @@ export const VueDocgenPlugin = ({
     onInitialized: async (app) => {
       const { grayMatterOptions } = app.options.markdown.frontmatter || {};
       const tmpFolder = join(app.options.temp, tmpFolderName);
+      const rootFolder = app.dir.source();
 
       // Create WebpackConfig for getting aliases and other config.resolve
       const webpackConfig = new WebpackConfig();
-
       await webpackHandleResolve({ app, config: webpackConfig, isServer: true });
 
       const baseDocgenCliConfig = defu(docgenCliConfig, {
@@ -68,7 +69,9 @@ export const VueDocgenPlugin = ({
         components,
         outDir: rawOutDir = '',
       }) => {
-        const outDir = resolve(tmpFolder, rawOutDir);
+        const outDir = stateless
+          ? resolve(tmpFolder, rawOutDir)
+          : resolve(rootFolder, rawOutDir);
         const config = {
           ...baseDocgenCliConfig,
           ...(componentsRoot && { componentsRoot }),
@@ -81,6 +84,13 @@ export const VueDocgenPlugin = ({
 
       // Without it, glob doesn't see generated files
       await sleep(100);
+
+      if (!stateless) {
+        // resolvePages that have been added by docgen
+        // TODO Handle case when file already exists, but changed by docgen
+        await reResolveAppPages(app);
+        return;
+      }
 
       // Read all generated doc files
       const docFiles = await glob('**/*.md', {
@@ -108,8 +118,8 @@ export const VueDocgenPlugin = ({
           filePath: join(tmpFolder, relativeDocPath),
           isDocgenPage: true,
           frontmatter: {
-            // Disable editLink by default, because vue-docgen-cli
-            // creates its links
+            // Disable editLink by default for stateless
+            // because it created in tmp folder
             editLink: false,
           },
         });
@@ -122,8 +132,9 @@ export const VueDocgenPlugin = ({
       }));
     },
 
-
     onWatched(app, watchers, restart) {
+      if (!stateless) return;
+
       const tmpFolder = join(app.options.temp, tmpFolderName);
 
       const watcher = chokidar.watch('**/*.md', {

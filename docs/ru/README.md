@@ -69,6 +69,13 @@ interface VueDocgenPluginPages {
 
 Список наборов компонентов с возможностью кастомизации `root` и `outDir`. `string` типы конвертируются в объект вида `pages: '*.vue'` -> `pages: [{ components: '*.vue' }]`.
 
+### stateless
+
+- type: `boolean`
+- default: `true`
+
+Режим генерации файлов во временную папку.
+
 ## Продвинутое использование
 
 В случае если вам необходимо изменить `docgenCliConfig.templates.component` и при этом сохранить функциональность `frontmatter`, необходимо использовать `extractAndCutFrontmatter`.

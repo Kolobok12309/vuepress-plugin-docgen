@@ -16,11 +16,13 @@ export default defineUserConfig({
         // This properties can't be added not from file config
         // docsRepo: 'kolobok12309/vuepress-plugin-docgen',
         // docsBranch: 'master',
+
         editLinkLabel: 'Edit on github',
         getRepoEditUrl: (p) =>
           `https://github.com/kolobok12309/vuepress-plugin-docgen/edit/master/${p}`,
       },
 
+      stateless: true,
       pages: 'components/**/*.vue',
       // pages: [
       //   {
@@ -53,6 +55,9 @@ export default defineUserConfig({
 
   theme: defaultTheme({
     repo: 'Kolobok12309/vuepress-plugin-docgen',
+
+    docsDir: 'docs',
+    docsBranch: 'master',
 
     locales: {
       '/': {

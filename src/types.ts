@@ -31,4 +31,7 @@ export interface VueDocgenPluginOptions {
 
   // List of component entries with custom outputs
   pages?: string | string[] | VueDocgenPluginPages[];
+  // Flag to generate doc files in vuepressApp.temp folder
+  // Enabled by default
+  stateless?: boolean;
 }
