@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.0](https://github.com/Kolobok12309/vuepress-plugin-docgen/compare/v1.0.0...v1.1.0) (2023-02-12)
+
+
+### Features
+
+* Add stateless option ([9a31db6](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/9a31db6b60f6ade7352f9e64417d6fcc819647fe))
+* Customize and rename pages to groups ([e1f16e7](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/e1f16e75dc355e0f36701121e4144780eb372ca5))
+
+
+### Bug Fixes
+
+* Add docsBlocks rendering ([deac758](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/deac758ad13edf9df8e39422da3d3fae7de6ace6))
+* Add docsBlocks rendering ([2d34335](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/2d343357b30d42b345db4492707ba51586afab2a))
+* Disable part of docgenCliConfig ([79fa44b](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/79fa44b2085cb6c69b768a8bb9b783eed0ef4a0b))
+* Extract edit-link html before gray-matter parsing ([7015d2a](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/7015d2aafa6476db9cf942131a2cf27c3c397faf))
+* Import real originalComponentTemplate instead of getted from config ([6488f4d](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/6488f4d9e1d02d224e48088af7fd28d38e6cb753))
+* Import real originalComponentTemplate instead of getted from config ([1037b77](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/1037b77ffa2cef8c8b0f554aa981d3288c0a3d1b))
+* Rename generated index.md files to README.md ([0f937d6](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/0f937d682cb24de34fa2cd9c0865dfcdbb0efab6))
+
 ## 1.0.0 (2023-02-11)
 
 
