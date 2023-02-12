@@ -139,6 +139,7 @@ const componentTemplate: Templates['component'] = (
 ### Vuepress editLink
 
 "Edit this page" в `stateless: true` моде не будет работать корректно и будет вести на несуществующий файл.
+Из-за этого, `editLink` отключены в `stateless: true` моде по умолчанию.
 
 Возможные решение:
 - `stateless: false` и хранить все сгенерированные файлы в репозитории.

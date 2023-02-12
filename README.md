@@ -111,6 +111,7 @@ export const extractAndCutFrontmatter = (
 ### Vuepress editLink
 
 "Edit this page" in `stateless: true` mode will not work correctly and lead to a non-existent file.
+Because it, `editLink` disabled in `stateless: true` mode by default.
 
 Solutions:
 - `stateless: false` and save all generated files in repo
