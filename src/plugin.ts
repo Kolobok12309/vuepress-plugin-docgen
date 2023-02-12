@@ -47,26 +47,19 @@ export const VueDocgenPlugin = ({
       const { grayMatterOptions } = app.options.markdown.frontmatter || {};
       const tmpFolder = join(app.options.temp, tmpFolderName);
 
-      const safeDocgenCliConfig = defu(docgenCliConfig, extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
-
       // Create WebpackConfig for getting aliases and other config.resolve
       const webpackConfig = new WebpackConfig();
 
       await webpackHandleResolve({ app, config: webpackConfig, isServer: true });
 
-      const baseDocgenCliConfig = {
-        ...safeDocgenCliConfig,
+      const baseDocgenCliConfig = defu(docgenCliConfig, {
         apiOptions: {
-          jsx: true,
-          ...safeDocgenCliConfig.apiOptions,
           ...webpackConfig.toConfig().resolve as any,
         },
         templates: {
-          ...safeDocgenCliConfig.templates,
           component: templateComponent(grayMatterOptions),
-          ...docgenCliConfig?.templates,
         },
-      };
+      }, extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
 
       // Generate doc from components entries
       await Promise.all(normalizedPages.map(async ({
@@ -101,11 +94,9 @@ export const VueDocgenPlugin = ({
         // Normalize path
         // Remove extension .md
         normalizedRelativeDocPath = normalizedRelativeDocPath.slice(0, -3);
-        // Make README and index more friendly urls
+        // Imitate vuepress index files README.md logic
         if (docBasename.toLowerCase() === 'readme.md')
           normalizedRelativeDocPath = normalizedRelativeDocPath.replace(/readme$/i, '');
-        if (docBasename.toLowerCase() === 'index.md')
-          normalizedRelativeDocPath = normalizedRelativeDocPath.replace(/index$/i, '');
 
         // Remove last slash
         if (normalizedRelativeDocPath.endsWith('/'))

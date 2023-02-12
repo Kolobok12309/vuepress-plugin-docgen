@@ -2,7 +2,6 @@ import { resolve } from 'path';
 
 import { defineUserConfig, createPage } from 'vuepress';
 import { defaultTheme } from '@vuepress/theme-default';
-import { defineConfig } from 'vue-docgen-cli';
 
 import { VueDocgenPlugin } from '../../src/index';
 
@@ -13,11 +12,14 @@ export default defineUserConfig({
   plugins: [
     VueDocgenPlugin({
       // docgenCliConfigPath: resolve(__dirname, './docgen.config.cjs'),
-      docgenCliConfig: defineConfig({
-        docsRepo: 'kolobok12309/vuepress-plugin-docgen',
-        docsBranch: 'master',
+      docgenCliConfig: {
+        // This properties can't be added not from file config
+        // docsRepo: 'kolobok12309/vuepress-plugin-docgen',
+        // docsBranch: 'master',
         editLinkLabel: 'Edit on github',
-      }),
+        getRepoEditUrl: (p) =>
+          `https://github.com/kolobok12309/vuepress-plugin-docgen/edit/master/${p}`,
+      },
 
       pages: 'components/**/*.vue',
       // pages: [

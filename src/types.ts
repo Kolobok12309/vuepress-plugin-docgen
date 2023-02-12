@@ -16,8 +16,16 @@ export interface VueDocgenPluginPages {
   outDir?: string;
 }
 
+// This properties used while vue-docgen-cli config extraction
+// and can't be processed by some merge
+export type UsedInVueDocgenConfigProcessingProperties = 'docsBranch'
+  | 'docsRepo'
+  | 'docsFolder';
 export interface VueDocgenPluginOptions {
-  docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir' | 'components'>>;
+  // Some of properties wouldn't worked not from file
+  // because vue-docgen-cli only accept file based config.
+  // For example 'docsBranch', 'docsFolder' and 'docsRepo' wouldn't converted to 'getRepoEditUrl'
+  docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir' | 'components' | UsedInVueDocgenConfigProcessingProperties> & Record<UsedInVueDocgenConfigProcessingProperties, never>>;
   // Path to vue-docgen-cli config
   docgenCliConfigPath?: string;
 
