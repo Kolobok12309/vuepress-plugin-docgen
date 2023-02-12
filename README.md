@@ -1,5 +1,10 @@
 # vuepress-plugin-docgen
 
+[![npm](https://img.shields.io/npm/v/vuepress-plugin-vue-docgen)](https://www.npmjs.com/package/vuepress-plugin-vue-docgen)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/kolobok12309/vuepress-plugin-docgen/ci.yml?label=ci)](https://github.com/Kolobok12309/vuepress-plugin-docgen/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/dw/vuepress-plugin-vue-docgen)](https://www.npmjs.com/package/vuepress-plugin-vue-docgen)
+[![Docs deploy](https://img.shields.io/github/deployments/kolobok12309/vuepress-plugin-docgen/github-pages?label=Docs%20deploy)](https://kolobok12309.github.io/vuepress-plugin-docgen)
+
 > Integration of [vue-docgen-cli](https://vue-styleguidist.github.io/docs/docgen-cli.html) with [vuepress 2](https://vuepress.github.io)
 
 ---
@@ -14,9 +19,9 @@
 ## Install
 
 ```sh
-npm add --save vuepress-plugin-docgen
-# pnpm add vuepress-plugin-docgen
-# yarn add vuepress-plugin-docgen
+npm add --save vuepress-plugin-vue-docgen
+# pnpm add vuepress-plugin-vue-docgen
+# yarn add vuepress-plugin-vue-docgen
 ```
 
 ## Usage

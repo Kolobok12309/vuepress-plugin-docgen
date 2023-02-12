@@ -10,7 +10,7 @@ import glob from 'globby';
 import defu from 'defu';
 import chokidar from 'chokidar';
 
-import templateComponent from './templates/component';
+import { templateComponent } from './templates';
 
 import type { VueDocgenPluginPages, VueDocgenPluginOptions } from './types';
 import { sleep, webpackHandleResolve } from './utils';
