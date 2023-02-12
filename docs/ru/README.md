@@ -50,24 +50,33 @@ export default defineUserConfig({
 
 Путь к `docgenCliConfig`. Работает лишь в `commonjs` синтаксисе модуля.
 
-### pages
+### groups
 
 ```ts
-interface VueDocgenPluginPages {
+interface VueDocgenPluginGroup {
   // Корень набора компонентов (эта часть пути будет вырезана из итогового url)
   root?: string;
   // Glob строка для поиска компонентов
   components: string | string[];
-  // Итоговая папка документации конкретной Page в vuepress
+  // Итоговая папка документации конкретной группы в vuepress
   outDir?: string;
+  // docgenCliConfig для конкретной группы компонентов
+  docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir' | UsedInVueDocgenConfigProcessingProperties>>;
 }
 ```
 
-- type: `string | string[] | VueDocgenPluginPages[]`
+- type: `string | string[] | VueDocgenPluginGroup[]`
 - required: `false`
 - default: `[{ components: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }]`
 
-Список наборов компонентов с возможностью кастомизации `root` и `outDir`. `string` типы конвертируются в объект вида `pages: '*.vue'` -> `pages: [{ components: '*.vue' }]`.
+Список наборов компонентов с возможностью кастомизации `root` и `outDir`. `string` типы конвертируются в объект вида `groups: '*.vue'` -> `groups: [{ components: '*.vue' }]`.
+
+### stateless
+
+- type: `boolean`
+- default: `true`
+
+Режим генерации файлов во временную папку.
 
 ## Продвинутое использование
 
@@ -126,3 +135,14 @@ const componentTemplate: Templates['component'] = (
   );
 };
 ```
+
+## Известные ошибки
+
+### Vuepress editLink
+
+"Edit this page" в `stateless: true` моде не будет работать корректно и будет вести на несуществующий файл.
+Из-за этого, `editLink` отключены в `stateless: true` моде по умолчанию.
+
+Возможные решение:
+- `stateless: false` и хранить все сгенерированные файлы в репозитории.
+- Использовать [`docgenCliConfig.getRepoEditUrl`](https://github.com/vue-styleguidist/vue-styleguidist/tree/dev/packages/vue-docgen-cli#getrepoediturl) и его под-свойства типа `docsRepo`, `docsBranch`.

@@ -12,8 +12,8 @@ import chokidar from 'chokidar';
 
 import { templateComponent } from './templates';
 
-import type { VueDocgenPluginPages, VueDocgenPluginOptions } from './types';
-import { sleep, webpackHandleResolve } from './utils';
+import type { VueDocgenPluginGroup, VueDocgenPluginOptions } from './types';
+import { sleep, webpackHandleResolve, defaultGetDestFile, reResolveAppPages } from './utils';
 import { tmpFolderName } from './config';
 
 
@@ -25,16 +25,17 @@ export const VueDocgenPlugin = ({
   docgenCliConfig = {},
   docgenCliConfigPath,
 
-  pages = [{ components: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }],
+  groups = [{ components: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }],
+  stateless = true,
 }: VueDocgenPluginOptions) => {
-  // Normalize pages
-  if (!Array.isArray(pages))
-    pages = [pages];
+  // Normalize groups
+  if (!Array.isArray(groups))
+    groups = [groups];
 
-  const normalizedPages: VueDocgenPluginPages[] = pages.map((stringOrObject) => {
+  const normalizedGroups = groups.map<VueDocgenPluginGroup>((stringOrObject) => {
     if (typeof stringOrObject === 'string') return {
       components: stringOrObject,
-    };
+    } as VueDocgenPluginGroup;
 
     return stringOrObject;
   });
@@ -46,47 +47,50 @@ export const VueDocgenPlugin = ({
     onInitialized: async (app) => {
       const { grayMatterOptions } = app.options.markdown.frontmatter || {};
       const tmpFolder = join(app.options.temp, tmpFolderName);
-
-      const safeDocgenCliConfig = defu(docgenCliConfig, extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
+      const rootFolder = app.dir.source();
 
       // Create WebpackConfig for getting aliases and other config.resolve
       const webpackConfig = new WebpackConfig();
-
       await webpackHandleResolve({ app, config: webpackConfig, isServer: true });
 
-      const baseDocgenCliConfig = {
-        ...safeDocgenCliConfig,
+      const baseDocgenCliConfig = defu(docgenCliConfig, {
         apiOptions: {
-          jsx: true,
-          ...safeDocgenCliConfig.apiOptions,
           ...webpackConfig.toConfig().resolve as any,
         },
         templates: {
-          ...safeDocgenCliConfig.templates,
           component: templateComponent(grayMatterOptions),
-          ...docgenCliConfig?.templates,
         },
-      };
+        getDestFile: defaultGetDestFile,
+      }, extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
 
       // Generate doc from components entries
-      await Promise.all(normalizedPages.map(async ({
+      await Promise.all(normalizedGroups.map(async ({
         root: componentsRoot,
         components,
         outDir: rawOutDir = '',
+        docgenCliConfig: groupDocgenCliConfig = {},
       }) => {
-        const outDir = resolve(tmpFolder, rawOutDir);
-        const config = {
-          ...baseDocgenCliConfig,
-          ...(componentsRoot && { componentsRoot }),
+        const outDir = stateless
+          ? resolve(tmpFolder, rawOutDir)
+          : resolve(rootFolder, rawOutDir);
+        const config = defu({
+          componentsRoot,
           components,
           outDir,
-        };
+        }, baseDocgenCliConfig, groupDocgenCliConfig);
 
         await docgen(config);
       }));
 
       // Without it, glob doesn't see generated files
       await sleep(100);
+
+      if (!stateless) {
+        // resolvePages that have been added by docgen
+        // TODO Handle case when file already exists, but changed by docgen
+        await reResolveAppPages(app);
+        return;
+      }
 
       // Read all generated doc files
       const docFiles = await glob('**/*.md', {
@@ -101,11 +105,9 @@ export const VueDocgenPlugin = ({
         // Normalize path
         // Remove extension .md
         normalizedRelativeDocPath = normalizedRelativeDocPath.slice(0, -3);
-        // Make README and index more friendly urls
+        // Imitate vuepress index files README.md logic
         if (docBasename.toLowerCase() === 'readme.md')
           normalizedRelativeDocPath = normalizedRelativeDocPath.replace(/readme$/i, '');
-        if (docBasename.toLowerCase() === 'index.md')
-          normalizedRelativeDocPath = normalizedRelativeDocPath.replace(/index$/i, '');
 
         // Remove last slash
         if (normalizedRelativeDocPath.endsWith('/'))
@@ -115,6 +117,11 @@ export const VueDocgenPlugin = ({
           path: '/' + normalizedRelativeDocPath,
           filePath: join(tmpFolder, relativeDocPath),
           isDocgenPage: true,
+          frontmatter: {
+            // Disable editLink by default for stateless
+            // because it created in tmp folder
+            editLink: false,
+          },
         });
 
         // Use original permalink if exists
@@ -125,8 +132,9 @@ export const VueDocgenPlugin = ({
       }));
     },
 
-
     onWatched(app, watchers, restart) {
+      if (!stateless) return;
+
       const tmpFolder = join(app.options.temp, tmpFolderName);
 
       const watcher = chokidar.watch('**/*.md', {
