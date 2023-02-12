@@ -13,7 +13,7 @@ import chokidar from 'chokidar';
 import { templateComponent } from './templates';
 
 import type { VueDocgenPluginPages, VueDocgenPluginOptions } from './types';
-import { sleep, webpackHandleResolve } from './utils';
+import { sleep, webpackHandleResolve, defaultGetDestFile } from './utils';
 import { tmpFolderName } from './config';
 
 
@@ -59,6 +59,7 @@ export const VueDocgenPlugin = ({
         templates: {
           component: templateComponent(grayMatterOptions),
         },
+        getDestFile: defaultGetDestFile,
       }, extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
 
       // Generate doc from components entries
