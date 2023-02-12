@@ -37,7 +37,7 @@ export default defineUserConfig({
       docgenCliConfigPath: null,
       docgenCliConfig: null,
       
-      pages: 'components/**/*.vue',
+      groups: 'components/**/*.vue',
     }),
   ],
 });
@@ -61,24 +61,33 @@ Config for `vue-docgen-cli`.
 
 File path to `docgenCliConfig`. Worked only `commonjs` syntax.
 
-### pages
+### groups
 
 ```ts
-interface VueDocgenPluginPages {
+interface VueDocgenPluginGroup {
   // Root of component (this part of file path would cutted)
   root?: string;
   // Glob string for find components
   components: string | string[];
-  // Out path of docs in vuepress app
+  // Out path of docs in vuepress app for this group
   outDir?: string;
+  // Custom docgenCliConfig for current group
+  docgenCliConfig?: Partial<Omit<DocgenCLIConfig, 'outDir' | UsedInVueDocgenConfigProcessingProperties>>;
 }
 ```
 
-- type: `string | string[] | VueDocgenPluginPages[]`
+- type: `string | string[] | VueDocgenPluginGroup[]`
 - required: `false`
 - default: `[{ components: ['**/components/**/*.vue', '!**/node_modules/**', '!**/.vuepress/**'] }]`
 
-List of component entries with custom `root` and `outDir`. `string` types converted like this `pages: '*.vue'` -> `pages: [{ components: '*.vue' }]`.
+List of component entries with custom `root` and `outDir`. `string` types converted like this `groups: '*.vue'` -> `groups: [{ components: '*.vue' }]`.
+
+### stateless
+
+- type: `boolean`
+- default: `true`
+
+Mode for generation files in tmp folder.
 
 ## extractAndCutFrontmatter
 
@@ -98,3 +107,14 @@ export const extractAndCutFrontmatter = (
   frontmatter: Record<any, any>;
 } => {}
 ```
+
+## Known issues
+
+### Vuepress editLink
+
+"Edit this page" in `stateless: true` mode will not work correctly and lead to a non-existent file.
+Because it, `editLink` disabled in `stateless: true` mode by default.
+
+Solutions:
+- `stateless: false` and save all generated files in repo
+- Use [`docgenCliConfig.getRepoEditUrl`](https://github.com/vue-styleguidist/vue-styleguidist/tree/dev/packages/vue-docgen-cli#getrepoediturl) and their sub-properties like `docsRepo`, `docsBranch`.
