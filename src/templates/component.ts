@@ -1,5 +1,6 @@
 import type { GrayMatterOption } from 'gray-matter';
-import { Templates } from 'vue-docgen-cli';
+import type { Templates } from 'vue-docgen-cli';
+// TODO Debug why can't import without extension
 import _originalComponentTemplate from 'vue-docgen-cli/lib/templates/component.js';
 
 import { extractAndCutFrontmatter } from '../utils';
