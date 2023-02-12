@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: release-please
     name: Build and deploy doc
-    if: needs.release-please.outputs.releases_created == 'true' || inputs.doc == 'true'
+    if: needs.release-please.outputs.releases_created == 'true' || inputs.doc == 'true' || contains(github.event.head_commit.message, '[doc]')
     steps:
       - uses: actions/checkout@v3
 
@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: release-please
     name: Publish to npm
-    if: needs.release-please.outputs.releases_created == 'true' || inputs.npm == 'true'
+    if: needs.release-please.outputs.releases_created == 'true' || inputs.npm == 'true' || contains(github.event.head_commit.message, '[npm]')
     steps:
       - uses: actions/checkout@v3
 
