@@ -76,7 +76,7 @@ jobs:
           node-version: '16'
           cache: 'pnpm'
 
-      - name: Build example site
+      - name: Build documentation
         run: pnpm docs:build
         env:
           BASE_URL: /vuepress-plugin-docgen/
