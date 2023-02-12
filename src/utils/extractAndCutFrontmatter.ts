@@ -5,6 +5,8 @@ import matter from 'gray-matter';
 import defu from 'defu';
 
 
+const editLinkRegexp = /^<a href="[^"]+" class="docgen-edit-link">[^<]+<\/a>/im;
+
 // Extract all frontmatter comments from content and doc.docsBlocks
 // and inject it back to content
 export const extractAndCutFrontmatter = (
@@ -28,10 +30,27 @@ export const extractAndCutFrontmatter = (
   let frontmatter = topContentFrontmatter;
 
   doc.docsBlocks?.forEach((blockContent, index) => {
-    const {
+    let formattedContent = blockContent.trim();
+    const editLinkMatch = formattedContent.match(editLinkRegexp);
+
+    // Cut edit-link for injection after parsing
+    if (editLinkMatch) {
+      formattedContent = formattedContent
+        .replace(editLinkRegexp, '')
+        .trim();
+    }
+
+    let {
       data,
       content: cuttedBlockContent
-    } = matter(blockContent.trim(), grayMatterOptions);
+    } = matter(formattedContent, grayMatterOptions);
+
+    if (editLinkMatch) {
+      cuttedBlockContent = [
+        editLinkMatch[0],
+        cuttedBlockContent,
+      ].join('\n\n');
+    }
 
     frontmatter = defu(data, frontmatter);
     doc.docsBlocks[index] = cuttedBlockContent;

@@ -106,6 +106,11 @@ export const VueDocgenPlugin = ({
           path: '/' + normalizedRelativeDocPath,
           filePath: join(tmpFolder, relativeDocPath),
           isDocgenPage: true,
+          frontmatter: {
+            // Disable editLink by default, because vue-docgen-cli
+            // creates its links
+            editLink: false,
+          },
         });
 
         // Use original permalink if exists
