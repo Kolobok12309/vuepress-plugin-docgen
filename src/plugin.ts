@@ -7,7 +7,7 @@ import _docgen, { extractConfig } from 'vue-docgen-cli';
 import WebpackConfig from 'webpack-chain';
 import glob from 'globby';
 
-import defu from 'defu';
+import { defu } from 'defu';
 import chokidar from 'chokidar';
 
 import { templateComponent } from './templates';

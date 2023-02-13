@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "type": "module",
   "description": "Vuepress plugin for vue auto doc generation based on vue-docgen-cli",
-  "main": "dist/index.cjs",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {

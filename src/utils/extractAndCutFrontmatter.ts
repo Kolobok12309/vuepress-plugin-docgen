@@ -2,7 +2,7 @@ import type { ComponentDoc } from 'vue-docgen-api';
 
 import type { GrayMatterOption } from 'gray-matter';
 import matter from 'gray-matter';
-import defu from 'defu';
+import { defu } from 'defu';
 
 
 const editLinkRegexp = /^<a href="[^"]+" class="docgen-edit-link">[^<]+<\/a>/im;
