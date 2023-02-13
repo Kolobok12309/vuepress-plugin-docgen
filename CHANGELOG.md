@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Kolobok12309/vuepress-plugin-docgen/compare/v1.1.0...v1.1.1) (2023-02-13)
+
+
+### Bug Fixes
+
+* Use concrete import of defu instead of default ([259aeb6](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/259aeb666e260f5d49b45b38a4c8e5f35837ce0f))
+
 ## [1.1.0](https://github.com/Kolobok12309/vuepress-plugin-docgen/compare/v1.0.0...v1.1.0) (2023-02-12)
 
 
