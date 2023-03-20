@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/Kolobok12309/vuepress-plugin-docgen/compare/v1.1.2...v1.1.3) (2023-03-20)
+
+
+### Bug Fixes
+
+* Revert fix: Enable per-file hot module replacement instead of full r… ([43058f3](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/43058f34688829557443a98ce7c569739852e07b))
+
 ## [1.1.2](https://github.com/Kolobok12309/vuepress-plugin-docgen/compare/v1.1.1...v1.1.2) (2023-03-20)
 
 
