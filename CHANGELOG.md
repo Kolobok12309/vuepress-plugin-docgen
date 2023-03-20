@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/Kolobok12309/vuepress-plugin-docgen/compare/v1.1.1...v1.1.2) (2023-03-20)
+
+
+### Bug Fixes
+
+* Enable per-file hot module replacement instead of full reload ([aafbcc8](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/aafbcc849826983a710a3d05cf2131b3d0f23be4))
+* Update vue-docgen-* packages to 4.64.1 ([4635be0](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/4635be032eabb56240c93ebe47704a1bb15071f2))
+
 ## [1.1.1](https://github.com/Kolobok12309/vuepress-plugin-docgen/compare/v1.1.0...v1.1.1) (2023-02-13)
 
 
