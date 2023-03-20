@@ -1,7 +1,9 @@
-import { resolve, join, basename } from 'path';
+import { resolve, join, basename, relative, dirname } from 'path';
+import { unlink, mkdir, symlink } from 'fs/promises';
 
 import type { Plugin } from '@vuepress/core';
 import { createPage } from '@vuepress/core';
+import { handlePageAdd, handlePageChange, handlePageUnlink } from '@vuepress/cli';
 
 import _docgen, { extractConfig } from 'vue-docgen-cli';
 import WebpackConfig from 'webpack-chain';
@@ -13,7 +15,13 @@ import chokidar from 'chokidar';
 import { templateComponent } from './templates';
 
 import type { VueDocgenPluginGroup, VueDocgenPluginOptions } from './types';
-import { sleep, webpackHandleResolve, defaultGetDestFile, reResolveAppPages } from './utils';
+import {
+  sleep,
+  webpackHandleResolve,
+  defaultGetDestFile,
+  reResolveAppPages,
+  isFileExists,
+} from './utils';
 import { tmpFolderName } from './config';
 
 
@@ -39,6 +47,7 @@ export const VueDocgenPlugin = ({
 
     return stringOrObject;
   });
+  const cwd = process.cwd();
 
 
   return {
@@ -48,6 +57,11 @@ export const VueDocgenPlugin = ({
       const { grayMatterOptions } = app.options.markdown.frontmatter || {};
       const tmpFolder = join(app.options.temp, tmpFolderName);
       const rootFolder = app.dir.source();
+
+      if (stateless) {
+        // Ignore native watch for pages
+        app.options.pagePatterns.push(`!${relative(rootFolder, tmpFolder)}/**/*.md`);
+      }
 
       // Create WebpackConfig for getting aliases and other config.resolve
       const webpackConfig = new WebpackConfig();
@@ -61,7 +75,7 @@ export const VueDocgenPlugin = ({
           component: templateComponent(grayMatterOptions),
         },
         getDestFile: defaultGetDestFile,
-      }, extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
+      }, await extractConfig(cwd, app.env.isDev, docgenCliConfigPath, []));
 
       // Generate doc from components entries
       await Promise.all(normalizedGroups.map(async ({
@@ -132,19 +146,108 @@ export const VueDocgenPlugin = ({
       }));
     },
 
-    onWatched(app, watchers, restart) {
+    async onWatched(app, watchers, restart) {
+      const configFilePath = docgenCliConfigPath
+        ? resolve(cwd, docgenCliConfigPath)
+        : join(cwd, 'docgen.config.js');
+
+      const configWatcher = chokidar.watch(configFilePath, {
+        ignoreInitial: true,
+      });
+
+      configWatcher.on('change', () => restart());
+
+      watchers.push(configWatcher);
+
       if (!stateless) return;
 
+      // Base logic of watching for `tmpFolder` is creating symlink's on every changes
+      // and update pages by them, because vuepress use only `filePath` for updates
+      // without some additional properties, for example `path`
       const tmpFolder = join(app.options.temp, tmpFolderName);
+      const rootFolder = app.dir.source();
 
-      const watcher = chokidar.watch('**/*.md', {
+      const pagesWatcher = chokidar.watch('**/*.md', {
         cwd: tmpFolder,
         ignoreInitial: true,
       });
 
-      watcher.on('change', () => restart());
+      const changedSet = new Set<string>();
+      pagesWatcher.on('add', async (filePathRelative) => {
+        console.log(`[vuepress-plugin-vue-docgen] add page: "${filePathRelative}"`);
 
-      watchers.push(watcher);
+        const filePath = join(tmpFolder, filePathRelative);
+        const fullPathInDocs = resolve(rootFolder, filePathRelative);
+
+        const isAlreadyExistsInDocs = await isFileExists(fullPathInDocs);
+
+        if (isAlreadyExistsInDocs) {
+          console.warn(`[vuepress-plugin-vue-docgen] Not add page "${filePathRelative}", file already exists in "${fullPathInDocs}"`);
+          return;
+        }
+
+        await mkdir(dirname(fullPathInDocs), { recursive: true });
+        await symlink(filePath, fullPathInDocs, 'file');
+
+        try {
+          await handlePageAdd(app, fullPathInDocs);
+
+          changedSet.add(filePath);
+        } catch (err) {
+          console.warn(`[vuepress-plugin-vue-docgen] Error while process tmp symlink`, err);
+        }
+
+        await unlink(fullPathInDocs);
+      });
+      pagesWatcher.on('change', async (filePathRelative) => {
+        console.log(`[vuepress-plugin-vue-docgen] change page: "${filePathRelative}"`);
+
+        const filePath = join(tmpFolder, filePathRelative);
+        const fullPathInDocs = resolve(rootFolder, filePathRelative);
+
+        const isAlreadyExistsInDocs = await isFileExists(fullPathInDocs);
+
+        if (isAlreadyExistsInDocs) {
+          console.warn(`[vuepress-plugin-vue-docgen] Not update page "${filePathRelative}", file already exists in "${fullPathInDocs}"`);
+          return;
+        }
+
+        const isAlreadyChanged = changedSet.has(filePath);
+
+        if (!isAlreadyChanged) {
+          changedSet.add(filePath);
+
+          await handlePageUnlink(app, filePath);
+        }
+
+        await mkdir(dirname(fullPathInDocs), { recursive: true });
+        await symlink(filePath, fullPathInDocs, 'file');
+
+        try {
+          if (isAlreadyChanged) await handlePageChange(app, fullPathInDocs);
+          else await handlePageAdd(app, fullPathInDocs);
+        } catch (err) {
+          console.warn(`[vuepress-plugin-vue-docgen] Error while process tmp symlink`, err);
+        }
+
+        await unlink(fullPathInDocs);
+      });
+      pagesWatcher.on('unlink', async (filePathRelative) => {
+        console.log(`[vuepress-plugin-vue-docgen] unlink page: "${filePathRelative}"`);
+
+        const filePath = join(tmpFolder, filePathRelative);
+        const fullPathInDocs = resolve(rootFolder, filePathRelative);
+
+        const isAlreadyChanged = changedSet.has(filePath);
+
+        const unlinkPath = isAlreadyChanged
+          ? fullPathInDocs
+          : filePath;
+
+        await handlePageUnlink(app, unlinkPath);
+      });
+
+      watchers.push(pagesWatcher);
     },
   } as Plugin;
 }
