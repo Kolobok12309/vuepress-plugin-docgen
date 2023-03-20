@@ -45,7 +45,6 @@
   "devDependencies": {
     "@vuepress/client": "^2.0.0-beta.60",
     "@vuepress/core": "^2.0.0-beta.60",
-    "@vuepress/cli": "^2.0.0-beta.60",
     "@vuepress/theme-default": "^2.0.0-beta.60",
     "eslint": "^8.33.0",
     "typescript": "^4.9.5",
@@ -64,7 +63,6 @@
     "webpack-chain": "^6.5.1"
   },
   "peerDependencies": {
-    "@vuepress/core": "^2.0.0-beta.49",
-    "@vuepress/cli": "^2.0.0-beta.49"
+    "@vuepress/core": "^2.0.0-beta.49"
   }
 }
