@@ -83,6 +83,10 @@ export default defineUserConfig({
                 link: '/components/button',
               },
               {
+                text: 'Separated button',
+                link: '/components/separated-button',
+              },
+              {
                 text: 'CounterButton',
                 link: '/components/counter-button',
               },
@@ -116,6 +120,10 @@ export default defineUserConfig({
               {
                 text: 'Button',
                 link: '/components/button',
+              },
+              {
+                text: 'Separated button',
+                link: '/components/separated-button',
               },
               {
                 text: 'CounterButton',
