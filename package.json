@@ -58,11 +58,11 @@
     "defu": "^6.1.2",
     "globby": "^10.0.2",
     "gray-matter": "^4.0.3",
-    "vue-docgen-api": "^4.56.4",
-    "vue-docgen-cli": "^4.57.1",
+    "vue-docgen-api": "^4.64.1",
+    "vue-docgen-cli": "^4.64.1",
     "webpack-chain": "^6.5.1"
   },
   "peerDependencies": {
-    "@vuepress/core": "^2.0.0-beta.60"
+    "@vuepress/core": "^2.0.0-beta.49"
   }
 }

@@ -61,7 +61,7 @@ export const VueDocgenPlugin = ({
           component: templateComponent(grayMatterOptions),
         },
         getDestFile: defaultGetDestFile,
-      }, extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
+      }, await extractConfig(process.cwd(), app.env.isDev, docgenCliConfigPath, []));
 
       // Generate doc from components entries
       await Promise.all(normalizedGroups.map(async ({
