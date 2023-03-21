@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@vuepress/bundler-webpack': ^2.0.0-beta.60
+  '@vuepress/cli': ^2.0.0-beta.60
   '@vuepress/client': ^2.0.0-beta.60
   '@vuepress/core': ^2.0.0-beta.60
   '@vuepress/theme-default': ^2.0.0-beta.60
@@ -29,6 +30,7 @@ dependencies:
   webpack-chain: 6.5.1
 
 devDependencies:
+  '@vuepress/cli': 2.0.0-beta.60
   '@vuepress/client': 2.0.0-beta.60
   '@vuepress/core': 2.0.0-beta.60
   '@vuepress/theme-default': 2.0.0-beta.60
