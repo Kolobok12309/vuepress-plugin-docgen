@@ -10,7 +10,7 @@ import WebpackConfig from 'webpack-chain';
 import glob from 'globby';
 
 import { defu } from 'defu';
-import chokidar from 'chokidar';
+import chokidar, { type FSWatcher } from 'chokidar';
 
 import { templateComponent } from './templates';
 
@@ -167,6 +167,8 @@ export const VueDocgenPlugin = ({
       const tmpFolder = join(app.options.temp, tmpFolderName);
       const rootFolder = app.dir.source();
 
+      const [nativePagesWatcher] = watchers as FSWatcher[];
+
       const pagesWatcher = chokidar.watch('**/*.md', {
         cwd: tmpFolder,
         ignoreInitial: true,
@@ -185,6 +187,8 @@ export const VueDocgenPlugin = ({
           console.warn(`[vuepress-plugin-vue-docgen] Not add page "${filePathRelative}", file already exists in "${fullPathInDocs}"`);
           return;
         }
+
+        nativePagesWatcher.unwatch(fullPathInDocs);
 
         await mkdir(dirname(fullPathInDocs), { recursive: true });
         await symlink(filePath, fullPathInDocs, 'file');
@@ -217,7 +221,9 @@ export const VueDocgenPlugin = ({
         if (!isAlreadyChanged) {
           changedSet.add(filePath);
 
-          await handlePageUnlink(app, filePath);
+          // With unlink, first change not update hmr
+          // await handlePageUnlink(app, filePath);
+          nativePagesWatcher.unwatch(fullPathInDocs);
         }
 
         await mkdir(dirname(fullPathInDocs), { recursive: true });
