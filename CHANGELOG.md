@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/Kolobok12309/vuepress-plugin-docgen/compare/v1.1.3...v1.1.4) (2023-03-21)
+
+
+### Bug Fixes
+
+* Test and fix hmr for webpack-bundler ([b9ec761](https://github.com/Kolobok12309/vuepress-plugin-docgen/commit/b9ec76173003c819e66500835e4d40855d38a505))
+
 ## [1.1.3](https://github.com/Kolobok12309/vuepress-plugin-docgen/compare/v1.1.2...v1.1.3) (2023-03-20)
 
 
